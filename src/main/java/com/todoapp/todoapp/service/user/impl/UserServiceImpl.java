@@ -1,6 +1,6 @@
 package com.todoapp.todoapp.service.user.impl;
 
-import com.todoapp.todoapp.dto.RegisterRequestDto;
+import com.todoapp.todoapp.dto.request.RegisterRequestDto;
 import com.todoapp.todoapp.repository.UserRepository;
 import com.todoapp.todoapp.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService, UserDetailsService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

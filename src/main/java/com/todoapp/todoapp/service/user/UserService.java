@@ -1,6 +1,6 @@
 package com.todoapp.todoapp.service.user;
 
-import com.todoapp.todoapp.dto.RegisterRequestDto;
+import com.todoapp.todoapp.dto.request.RegisterRequestDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {

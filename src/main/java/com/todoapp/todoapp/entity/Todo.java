@@ -1,5 +1,6 @@
 package com.todoapp.todoapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.todoapp.todoapp.enums.Status;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,20 +26,23 @@ public class Todo {
 
     @CreationTimestamp
     @Column(name = "created_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     @Column(name = "update_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime updateDate;
 
     @Column(name = "due_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

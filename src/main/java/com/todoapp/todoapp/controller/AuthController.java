@@ -1,8 +1,8 @@
 package com.todoapp.todoapp.controller;
 
-import com.todoapp.todoapp.dto.AuthRequest;
-import com.todoapp.todoapp.dto.AuthResponse;
-import com.todoapp.todoapp.dto.RegisterRequestDto;
+import com.todoapp.todoapp.dto.request.AuthRequest;
+import com.todoapp.todoapp.dto.response.AuthResponse;
+import com.todoapp.todoapp.dto.request.RegisterRequestDto;
 import com.todoapp.todoapp.security.JwtUtil;
 import com.todoapp.todoapp.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
