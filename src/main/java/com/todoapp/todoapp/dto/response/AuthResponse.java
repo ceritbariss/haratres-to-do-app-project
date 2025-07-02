@@ -1,4 +1,4 @@
-package com.todoapp.todoapp.dto;
+package com.todoapp.todoapp.dto.response;
 
 public class AuthResponse {
 
