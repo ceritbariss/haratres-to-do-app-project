@@ -1,4 +1,4 @@
-package com.todoapp.todoapp.dto;
+package com.todoapp.todoapp.dto.request;
 
 import java.time.LocalDate;
 
