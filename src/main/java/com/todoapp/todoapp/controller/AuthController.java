@@ -1,10 +1,11 @@
 package com.todoapp.todoapp.controller;
 
-import com.todoapp.todoapp.dto.request.AuthRequest;
+import com.todoapp.todoapp.dto.request.*;
 import com.todoapp.todoapp.dto.response.AuthResponse;
-import com.todoapp.todoapp.dto.request.RegisterRequestDto;
 import com.todoapp.todoapp.security.JwtUtil;
+import com.todoapp.todoapp.service.passwordreset.PasswordResetService;
 import com.todoapp.todoapp.service.user.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +26,15 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final PasswordResetService passwordResetService;
 
     @Autowired
-    public AuthController(UserService userService, JwtUtil jwtUtil, AuthenticationManager authenticationManager) {
+    public AuthController(UserService userService, JwtUtil jwtUtil,
+                          AuthenticationManager authenticationManager, PasswordResetService passwordResetService) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
+        this.passwordResetService = passwordResetService;
     }
 
     @PostMapping("/login")
@@ -53,12 +57,31 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequestDto request){
-        try {
-            userService.registerUser(request);
-            return ResponseEntity.ok("Kayıt başarılı!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Kayıt başarısız! : " + e.getMessage());
-        }
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDto request){
+        userService.registerUser(request);
+        return ResponseEntity.ok("Kayıt başarılı!");
+    }
+
+    // Kullanıcı şifresini unuttuysa email adresini giriyor ve OTP gönderiliyor.
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> sendOtp(@RequestBody EmailRequest request){
+        passwordResetService.sendOtpToEmail(request.getEmail());
+        return ResponseEntity.ok("OTP e-mail adresinize gönderildi!");
+    }
+
+    // Kullanıcı email adresine gelen OTP kodunu ve email adresini gönderir eşleşiyor mu kontrolü yapılır.
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody OtpVerificationRequest request){
+        boolean isValid = passwordResetService.verifyOtp(request.getEmail(), request.getOtp());
+
+        return isValid ? ResponseEntity.ok("OTP Doğrulandı!")
+                : ResponseEntity.badRequest().body("Geçersiz veya süresi dolmuş OTP!");
+    }
+
+    // Eğer girilen OTP email adresiyle uyuşuyorsa yeni girilen şifreyle güncellenir.
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request){
+        passwordResetService.updatePassword(request.getEmail(), request.getOtp(), request.getNewPassword());
+        return ResponseEntity.ok("Şifreniz başarıyla güncellendi.");
     }
 }

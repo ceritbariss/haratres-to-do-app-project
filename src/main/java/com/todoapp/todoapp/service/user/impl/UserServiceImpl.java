@@ -44,6 +44,10 @@ public class UserServiceImpl implements UserService, UserDetailsService{
             throw new RuntimeException("Bu kullanıcı adı kullanılıyor!");
         }
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("Bu e-posta adresi zaten kayıtlı.");
+        }
+
         User user = new User();
         user.setUserName(request.getUserName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
