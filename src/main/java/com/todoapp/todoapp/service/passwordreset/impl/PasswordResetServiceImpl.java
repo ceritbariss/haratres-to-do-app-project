@@ -37,7 +37,6 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı!"));
 
-        // Kullanıcının önceki OTP si varsa siler.
         otpRepository.deleteByUser(user);
 
         String otp = passwordResetUtil.generateOtp();

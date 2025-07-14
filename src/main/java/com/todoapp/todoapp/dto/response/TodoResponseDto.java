@@ -5,7 +5,7 @@ import com.todoapp.todoapp.enums.Status;
 
 import java.time.LocalDateTime;
 
-public class TodoResponseDTO {
+public class TodoResponseDto {
     private int id;
     private String title;
     private String description;

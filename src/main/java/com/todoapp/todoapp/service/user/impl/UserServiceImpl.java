@@ -1,8 +1,11 @@
 package com.todoapp.todoapp.service.user.impl;
 
 import com.todoapp.todoapp.dto.request.RegisterRequestDto;
+import com.todoapp.todoapp.dto.request.UserUpdateRequestDto;
 import com.todoapp.todoapp.repository.UserRepository;
+import com.todoapp.todoapp.security.JwtUtil;
 import com.todoapp.todoapp.service.user.UserService;
+import com.todoapp.todoapp.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.todoapp.todoapp.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
@@ -18,11 +22,16 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
+    private final UserUtil userUtil;
 
     @Autowired
-    UserServiceImpl(UserRepository theUserRepository, PasswordEncoder thePasswordEncoder){
+    UserServiceImpl(UserRepository theUserRepository, PasswordEncoder thePasswordEncoder,
+                    JwtUtil theJwtUtil, UserUtil theUserUtil){
         userRepository = theUserRepository;
         passwordEncoder = thePasswordEncoder;
+        jwtUtil = theJwtUtil;
+        userUtil = theUserUtil;
     }
 
     @Override
@@ -59,5 +68,30 @@ public class UserServiceImpl implements UserService, UserDetailsService{
         user.setPhoneNumber(request.getPhoneNumber());
 
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public String updateCurrentUser(UserUpdateRequestDto request) {
+        String currentUsername = userUtil.getCurrentUsername();
+        User user = userRepository.findByUserName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı Bulunamadı"));
+
+        boolean usernameChanged = userUtil.updateUserFields(request, user);
+
+        if (usernameChanged){
+            return jwtUtil.generateToken(user.getUserName());
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteCurrentUser() {
+        String currentUsername = userUtil.getCurrentUsername();
+
+        User user = userRepository.findByUserName(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+
+        userRepository.delete(user);
     }
 }

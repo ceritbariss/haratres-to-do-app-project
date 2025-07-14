@@ -1,7 +1,7 @@
 package com.todoapp.todoapp.service.todo.impl;
 
-import com.todoapp.todoapp.dto.request.TodoCreateRequest;
-import com.todoapp.todoapp.dto.request.TodoUpdateRequestDTO;
+import com.todoapp.todoapp.dto.request.TodoCreateRequestDto;
+import com.todoapp.todoapp.dto.request.TodoUpdateRequestDto;
 import com.todoapp.todoapp.entity.Todo;
 import com.todoapp.todoapp.entity.User;
 import com.todoapp.todoapp.enums.Status;
@@ -9,6 +9,7 @@ import com.todoapp.todoapp.repository.TodoRepository;
 import com.todoapp.todoapp.repository.UserRepository;
 import com.todoapp.todoapp.service.todo.TodoService;
 import com.todoapp.todoapp.util.UserUtil;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,26 +21,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class TodoServiceImpl implements TodoService {
 
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
+    private final UserUtil userUtil;
 
     @Autowired
-    public TodoServiceImpl(UserRepository userRepository, TodoRepository todoRepository) {
+    public TodoServiceImpl(UserRepository userRepository, TodoRepository todoRepository, UserUtil userUtil) {
         this.userRepository = userRepository;
         this.todoRepository = todoRepository;
+        this.userUtil = userUtil;
     }
 
 
     // Kullanıcının yeni todos oluşturmasını sağlar.
     @Override
     @Transactional
-    public Todo createTodo(TodoCreateRequest request) {
-        String username = UserUtil.getCurrentUsername();
+    public Todo createTodo(TodoCreateRequestDto request) {
+        String username = userUtil.getCurrentUsername();
 
         User user = userRepository.findByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -59,7 +61,7 @@ public class TodoServiceImpl implements TodoService {
     // Giriş yapan kullanıcının todolarını getirmek için.
     @Override
     public Page<Todo> getTodosForCurrentUser(int page, int size) {
-        String username = UserUtil.getCurrentUsername();
+        String username = userUtil.getCurrentUsername();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
         return todoRepository.findAllByUserUserName(username, pageable);
@@ -69,27 +71,27 @@ public class TodoServiceImpl implements TodoService {
     @Override
     @Transactional
     public void deleteTodoById(int id) {
-        String currentUsername = UserUtil.getCurrentUsername();
+        String currentUsername = userUtil.getCurrentUsername();
 
         Todo todo = todoRepository.findByIdAndUserUserName(id, currentUsername)
-                .orElseThrow(() -> new AccessDeniedException("Bu todo size ait değil veya böyle bir todo yok."));
+                .orElseThrow(() -> new RuntimeException("Bu todo size ait değil veya böyle bir todo yok."));
 
         todoRepository.delete(todo);
     }
 
     // Kullanıcının id numarasını verdiği todoyu güncellemek için kullanılır.
     @Override
-    public Todo updateTodo(int id, TodoUpdateRequestDTO request) {
-        String username = UserUtil.getCurrentUsername();
+    public Todo updateTodo(int id, TodoUpdateRequestDto request) {
+        String username = userUtil.getCurrentUsername();
 
         Todo todo = todoRepository.findByIdAndUserUserName(id, username)
-                .orElseThrow(() -> new AccessDeniedException("Bu todo size ait değil veya böyle bir todo yok."));
+                .orElseThrow(() -> new RuntimeException("Bu todo size ait değil veya böyle bir todo yok."));
 
-        if (request.getTitle() != null) {
+        if (StringUtils.isNotBlank(request.getTitle())) {
             todo.setTitle(request.getTitle());
         }
 
-        if (request.getDescription() != null) {
+        if (StringUtils.isNotBlank(request.getDescription())) {
             todo.setDescription(request.getDescription());
         }
 
@@ -109,8 +111,8 @@ public class TodoServiceImpl implements TodoService {
     // Kullanıcının istediği statuslere sahip todoları göstermek için kullanılır.
     @Override
     public Page<Todo> getTodosByStatus(Status status, int page, int size) {
-        String username = UserUtil.getCurrentUsername();
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
+        String username = userUtil.getCurrentUsername();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
         return todoRepository.findAllByUserUserNameAndStatus(username, status, pageable);
     }
@@ -118,8 +120,8 @@ public class TodoServiceImpl implements TodoService {
     // Kullanıcının verdiği keywordün bulunduğu title a sahip todoları döndürmek için kullanılır.
     @Override
     public Page<Todo> searchTodosByTitle(String keyword, int page, int size) {
-        String username = UserUtil.getCurrentUsername();
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
+        String username = userUtil.getCurrentUsername();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
         return todoRepository.findAllByUserUserNameAndTitleContainingIgnoreCase(username, keyword, pageable);
     }
@@ -127,13 +129,7 @@ public class TodoServiceImpl implements TodoService {
     // İstenilen sıralama türüne göre kullanıcının todolarını sıralı bir şekilde getirmeye yarar.
     @Override
     public Page<Todo> getSortedTodos(String sortBy, String direction, int page, int size) {
-        String username = UserUtil.getCurrentUsername();
-
-        // Eğer geçerli bir değer girilmezse default olarak "createdDate" seçilir.
-        List<String> allowedFields = List.of("createdDate", "updateDate", "dueDate");
-        if (!allowedFields.contains(sortBy)){
-            sortBy = "createdDate";
-        }
+        String username = userUtil.getCurrentUsername();
 
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
