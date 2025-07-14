@@ -1,8 +1,8 @@
 package com.todoapp.todoapp.controller;
 
-import com.todoapp.todoapp.dto.request.TodoCreateRequest;
-import com.todoapp.todoapp.dto.request.TodoUpdateRequestDTO;
-import com.todoapp.todoapp.dto.response.TodoResponseDTO;
+import com.todoapp.todoapp.dto.request.TodoCreateRequestDto;
+import com.todoapp.todoapp.dto.request.TodoUpdateRequestDto;
+import com.todoapp.todoapp.dto.response.TodoResponseDto;
 import com.todoapp.todoapp.entity.Todo;
 import com.todoapp.todoapp.enums.Status;
 import com.todoapp.todoapp.service.todo.TodoService;
@@ -10,15 +10,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.service.annotation.PatchExchange;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -28,7 +24,7 @@ public class TodoController {
     private TodoService todoService;
     private ModelMapper modelMapper;
 
-    @Autowired
+
     public TodoController(TodoService todoService, ModelMapper modelMapper) {
         this.todoService = todoService;
         this.modelMapper = modelMapper;
@@ -38,14 +34,14 @@ public class TodoController {
 
     // Kullanıcının bütün todolarını döndürür.
     @GetMapping
-    public ResponseEntity<Page<TodoResponseDTO>> getTodosForCurrentUser(
+    public ResponseEntity<Page<TodoResponseDto>> getTodosForCurrentUser(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
         Page<Todo> todos = todoService.getTodosForCurrentUser(page, size);
 
-        Page<TodoResponseDTO> response = todos.map(todo ->
-                modelMapper.map(todo, TodoResponseDTO.class)
+        Page<TodoResponseDto> response = todos.map(todo ->
+                modelMapper.map(todo, TodoResponseDto.class)
         );
 
         return ResponseEntity.ok(response);
@@ -53,44 +49,44 @@ public class TodoController {
 
     // Kullanıcının todolarını istediği statuslarına göre döndürür.
     @GetMapping("/status")
-    public ResponseEntity<Page<TodoResponseDTO>> getTodosByStatus(@RequestParam @NotBlank(message = "Status boş olamaz.") Status status,
+    public ResponseEntity<Page<TodoResponseDto>> getTodosByStatus(@RequestParam Status status,
                                                                   @RequestParam(defaultValue = "0") int page,
                                                                   @RequestParam(defaultValue = "10") int size)
     {
         Page<Todo> todos = todoService.getTodosByStatus(status, page, size);
 
-        Page<TodoResponseDTO> response = todos.map(todo ->
-                modelMapper.map(todo, TodoResponseDTO.class));
+        Page<TodoResponseDto> response = todos.map(todo ->
+                modelMapper.map(todo, TodoResponseDto.class));
 
         return ResponseEntity.ok(response);
     }
 
     // Kullanıcının girdiği keyword hangi todoların titleın da varsa onları döndürür.
     @GetMapping("/search")
-    public ResponseEntity<Page<TodoResponseDTO>> searchTodosByTitle(@RequestParam @NotBlank(message = "Anahtar kelime boş olamaz.") String keyword,
+    public ResponseEntity<Page<TodoResponseDto>> searchTodosByTitle(@RequestParam @NotBlank(message = "Anahtar kelime boş olamaz.") String keyword,
                                                                     @RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size)
     {
         Page<Todo> todos = todoService.searchTodosByTitle(keyword, page, size);
 
-        Page<TodoResponseDTO> response = todos.map(todo ->
-                modelMapper.map(todo, TodoResponseDTO.class));
+        Page<TodoResponseDto> response = todos.map(todo ->
+                modelMapper.map(todo, TodoResponseDto.class));
 
         return ResponseEntity.ok(response);
     }
 
     // Kullanıcının istediği sıralama türüne göre todoları sıralı bir şekilde döndürür.
     @GetMapping("/sorted")
-    public ResponseEntity<Page<TodoResponseDTO>> getSortedTodos(
-        @RequestParam(defaultValue = "createdDate") @NotBlank(message = "Created Date alanı boş olamaz.") String sortBy,
-        @RequestParam(defaultValue = "asc") @NotBlank(message = "Direction alanı boş olamaz.") String direction,
+    public ResponseEntity<Page<TodoResponseDto>> getSortedTodos(
+        @RequestParam @NotBlank(message = "Created Date alanı boş olamaz.") String sortBy,
+        @RequestParam @NotBlank(message = "Direction alanı boş olamaz.") String direction,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ){
         Page<Todo> todos = todoService.getSortedTodos(sortBy, direction, page, size);
 
-        Page<TodoResponseDTO> response = todos.map(todo ->
-                modelMapper.map(todo, TodoResponseDTO.class));
+        Page<TodoResponseDto> response = todos.map(todo ->
+                modelMapper.map(todo, TodoResponseDto.class));
 
         return ResponseEntity.ok(response);
     }
@@ -99,10 +95,10 @@ public class TodoController {
 
     // Yeni todos oluşturmak için kullanılır.
     @PostMapping("/create")
-    public ResponseEntity<TodoResponseDTO> createTodo(@Valid @RequestBody TodoCreateRequest request) {
+    public ResponseEntity<TodoResponseDto> createTodo(@Valid @RequestBody TodoCreateRequestDto request) {
         Todo createdTodo = todoService.createTodo(request);
 
-        TodoResponseDTO responseDTO = modelMapper.map(createdTodo, TodoResponseDTO.class);
+        TodoResponseDto responseDTO = modelMapper.map(createdTodo, TodoResponseDto.class);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
@@ -121,11 +117,11 @@ public class TodoController {
 
     // Id si verilen todoyu güncellemek için kullanılır.
     @PatchMapping("/{id}")
-    public ResponseEntity<TodoResponseDTO> updateTodo(@PathVariable @Min(value = 1, message = "ID 1'den küçük olamaz") int id,
-                                                      @Valid @RequestBody TodoUpdateRequestDTO request){
+    public ResponseEntity<TodoResponseDto> updateTodo(@PathVariable @Min(value = 1, message = "ID 1'den küçük olamaz") int id,
+                                                      @Valid @RequestBody TodoUpdateRequestDto request){
         Todo updated = todoService.updateTodo(id, request);
 
-        TodoResponseDTO response = modelMapper.map(updated, TodoResponseDTO.class);
+        TodoResponseDto response = modelMapper.map(updated, TodoResponseDto.class);
 
         return ResponseEntity.ok(response);
     }

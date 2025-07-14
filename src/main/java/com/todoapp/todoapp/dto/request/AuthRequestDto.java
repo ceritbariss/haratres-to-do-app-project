@@ -2,7 +2,7 @@ package com.todoapp.todoapp.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class AuthRequest {
+public class AuthRequestDto {
 
     @NotBlank(message = "Kullanıcı adı boş olamaz.")
     private String username;

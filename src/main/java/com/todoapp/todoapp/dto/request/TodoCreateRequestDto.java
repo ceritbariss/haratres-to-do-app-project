@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
 
-public class TodoCreateRequest {
+public class TodoCreateRequestDto {
 
     @NotBlank(message = "Title alanı boş olamaz.")
     private String title;

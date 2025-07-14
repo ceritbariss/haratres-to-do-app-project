@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-public class TodoUpdateRequestDTO {
+public class TodoUpdateRequestDto {
 
     private String title;
 
@@ -15,6 +15,7 @@ public class TodoUpdateRequestDTO {
 
     @FutureOrPresent(message = "Son teslim tarihi geçmiş olamaz.")
     private LocalDateTime dueDate;
+
     private Status status;
 
     public String getTitle() {

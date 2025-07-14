@@ -1,10 +1,10 @@
 package com.todoapp.todoapp.dto.response;
 
-public class AuthResponse {
+public class AuthResponseDto {
 
     private String jwt;
 
-    public AuthResponse(String jwt) {
+    public AuthResponseDto(String jwt) {
         this.jwt = jwt;
     }
 

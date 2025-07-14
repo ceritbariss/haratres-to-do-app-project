@@ -2,7 +2,7 @@ package com.todoapp.todoapp.dto.response;
 
 import java.time.LocalDate;
 
-public class UserResponseDTO {
+public class UserResponseDto {
 
     private int id;
     private String userName;
