@@ -10,6 +10,9 @@ import com.todoapp.todoapp.repository.UserRepository;
 import com.todoapp.todoapp.service.todo.TodoService;
 import com.todoapp.todoapp.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -55,10 +58,11 @@ public class TodoServiceImpl implements TodoService {
 
     // Giriş yapan kullanıcının todolarını getirmek için.
     @Override
-    public List<Todo> getTodosForCurrentUser() {
+    public Page<Todo> getTodosForCurrentUser(int page, int size) {
         String username = UserUtil.getCurrentUsername();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
-        return todoRepository.findAllByUserUserName(username);
+        return todoRepository.findAllByUserUserName(username, pageable);
     }
 
     // Giriş yapmış olan kullanıcının gönderdiği id ye sahip todoyu silmek için kulanılır.
@@ -104,22 +108,25 @@ public class TodoServiceImpl implements TodoService {
 
     // Kullanıcının istediği statuslere sahip todoları göstermek için kullanılır.
     @Override
-    public List<Todo> getTodosByStatus(Status status) {
+    public Page<Todo> getTodosByStatus(Status status, int page, int size) {
         String username = UserUtil.getCurrentUsername();
-        return todoRepository.findAllByUserUserNameAndStatus(username, status);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
+
+        return todoRepository.findAllByUserUserNameAndStatus(username, status, pageable);
     }
 
     // Kullanıcının verdiği keywordün bulunduğu title a sahip todoları döndürmek için kullanılır.
     @Override
-    public List<Todo> searchTodosByTitle(String keyword) {
+    public Page<Todo> searchTodosByTitle(String keyword, int page, int size) {
         String username = UserUtil.getCurrentUsername();
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").ascending());
 
-        return todoRepository.findAllByUserUserNameAndTitleContainingIgnoreCase(username, keyword);
+        return todoRepository.findAllByUserUserNameAndTitleContainingIgnoreCase(username, keyword, pageable);
     }
 
     // İstenilen sıralama türüne göre kullanıcının todolarını sıralı bir şekilde getirmeye yarar.
     @Override
-    public List<Todo> getSortedTodos(String sortBy, String direction) {
+    public Page<Todo> getSortedTodos(String sortBy, String direction, int page, int size) {
         String username = UserUtil.getCurrentUsername();
 
         // Eğer geçerli bir değer girilmezse default olarak "createdDate" seçilir.
@@ -129,8 +136,8 @@ public class TodoServiceImpl implements TodoService {
         }
 
         Sort.Direction sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Sort sort = Sort.by(sortDirection, sortBy);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
-        return todoRepository.findAllByUserUserName(username, sort);
+        return todoRepository.findAllByUserUserName(username, pageable);
     }
 }
