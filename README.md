@@ -19,7 +19,7 @@ MySQL
 ### API Entegrasyonu
 WeatherAPI 
 
-
+<hr style="border: 0.2px solid #888;" />
 
 ## Projeyi Çalıştırma
 ### 1. Projeyi Klonla
@@ -65,6 +65,7 @@ chmod +x mvnw
 <details>
 
 <summary> <b>POST</b> /auth/login </summary>
+<br/>
 
 <b>Açıklama :</b> Kullanıcının kullanıcı adı ve şifresi ile giriş yapmasını sağlar. Başarılı girişte JWT token döner.
 
@@ -93,6 +94,7 @@ chmod +x mvnw
 <details>
 
 <summary> <b>POST</b> /auth/register </summary>
+<br/>
 
 <b>Açıklama :</b> Yeni bir kullanıcı kaydı oluşturur.
 
@@ -113,11 +115,11 @@ chmod +x mvnw
 ```
 
 <b>Response :</b>
-```json
+```text
   Kayıt başarılı!
 ```
 <b>Error :</b>
-```text
+```json
   {
     "timestamp": "2025-07-17T18:01:40.8687937",
     "status": 400,
@@ -131,6 +133,7 @@ chmod +x mvnw
 <details>
 
 <summary> <b>POST</b> /auth/forgot-password </summary>
+<br/>
 
 <b>Açıklama :</b> Şifre sıfırlama için e-posta adresine OTP kodu gönderir.
 
@@ -144,11 +147,11 @@ chmod +x mvnw
 ```
 
 <b>Response :</b>
-```json
+```text
   OTP e-mail adresinize gönderildi!
 ```
 <b>Error :</b>
-```text
+```json
   {
     "timestamp": "2025-07-17T18:06:39.6171454",
     "status": 400,
@@ -162,6 +165,7 @@ chmod +x mvnw
 <details>
 
 <summary> <b>POST</b> /auth/verify-otp </summary>
+<br/>
 
 <b>Açıklama :</b> Kullanıcının e-posta adresine gönderilen OTP kodunun doğruluğunu kontrol eder.
 
@@ -176,11 +180,11 @@ chmod +x mvnw
 ```
 
 <b>Response :</b>
-```json
+```text
   OTP Doğrulandı!
 ```
 <b>Error :</b>
-```text
+```json
   {
     "timestamp": "2025-07-17T18:09:19.47802",
     "status": 400,
@@ -194,6 +198,7 @@ chmod +x mvnw
 <details>
 
 <summary> <b>POST</b> /auth/reset-password </summary>
+<br/>
 
 <b>Açıklama :</b> Girilen OTP ve yeni şifre ile kullanıcı şifresini günceller.
 
@@ -209,7 +214,7 @@ chmod +x mvnw
 ```
 
 <b>Response :</b>
-```json
+```text
   Şifreniz başarıyla güncellendi.
 ```
 <b>Error :</b>
@@ -228,6 +233,7 @@ chmod +x mvnw
 <details>
 
 <summary> <b>PATCH</b> /api/me </summary>
+<br/>
 
 <b>Açıklama :</b> Giriş yapmış kullanıcının bilgilerini günceller, eğer kullanıcı adı güncellendiyse yeni JWT token döner.
 
@@ -256,7 +262,7 @@ Username güncellendiği için JWT döndü.
 }
 ```
 Eğer username güncellenmezse.
-```json
+```text
 Kullanıcı bilgileri güncellendi
 ```
 
@@ -275,6 +281,7 @@ Kullanıcı bilgileri güncellendi
 <details>
 
 <summary> <b>DELETE</b> /api/me </summary>
+<br/>
 
 <b>Açıklama :</b> Giriş yapan kullanıcının hesabını siler.
 
@@ -287,13 +294,14 @@ Kullanıcı bilgileri güncellendi
 <details>
 
 <summary> <b>GET</b> /api/todos </summary>
+<br/>
 
 <b>Açıklama :</b> Giriş yapan kullanıcının todolarını sayfalı olarak getirir.
 
 <b>URL :</b> http://localhost:8080/api/todos?page=0&size=1
 
 <b>Request :</b>
-```json
+```text
 page = 0
 size = 1
 ```
@@ -354,6 +362,7 @@ size = 1
 <details>
 
 <summary> <b>GET</b> /api/todos/status </summary>
+<br/>
 
 <b>Açıklama :</b> Belirtilen duruma göre todoları sayfalı olarak listeler.
 
@@ -362,7 +371,7 @@ size = 1
 <b>Request :</b>
 
 Status değerleri = IN_PROGRESS / CREATED / COMPLETE
-```json
+```text
 status = IN_PROGRESS
 page = 0
 size = 1
@@ -424,6 +433,7 @@ size = 1
 <details>
 
 <summary> <b>GET</b> /api/todos/search </summary>
+<br/>
 
 <b>Açıklama :</b> Girilen anahtar kelimeyi içeren başlıklara sahip görevleri sayfalı olarak listeler.
 
@@ -431,7 +441,7 @@ size = 1
 
 <b>Request :</b>
 
-```json
+```text
 keyword = front
 page = 0
 size = 1
@@ -493,6 +503,7 @@ size = 1
 <details>
 
 <summary> <b>GET</b> /api/todos/sorted </summary>
+<br/>
 
 <b>Açıklama :</b> Girilen sıralama kriterine ve yönüne göre görevleri sayfalı olarak sıralı şekilde listeler.
 
@@ -501,7 +512,7 @@ size = 1
 <b>Request :</b>
 
 sortBy değerleri = createdDate / updateDate / dueDate
-```json
+```text
 sortBy = dueDate
 direction = desc
 page = 0
@@ -564,6 +575,7 @@ size = 1
 <details>
 
 <summary> <b>POST</b> /api/todos/create </summary>
+<br/>
 
 <b>Açıklama :</b> Yeni bir görev oluşturarak veritabanına kaydeder ve oluşturulan görevi döner.
 
@@ -606,6 +618,7 @@ size = 1
 <details>
 
 <summary> <b>DELETE</b> /api/todos/{id} </summary>
+<br/>
 
 <b>Açıklama :</b> Belirtilen ID'ye sahip görevi siler. Başarılı işlemde içerik döndürülmez (204 No Content).
 
@@ -613,12 +626,12 @@ size = 1
 
 <b>Request :</b>
 
-```json
+```text
 id = 67
 ```
 
 <b>Response :</b>
-```json
+```text
 204
 No Content
 ```
@@ -637,6 +650,7 @@ No Content
 <details>
 
 <summary> <b>PATCH</b> /api/todos/{id} </summary>
+<br/>
 
 <b>Açıklama :</b> Belirtilen ID'ye sahip görevin bilgilerini günceller ve güncellenmiş görevi döner.
 
@@ -682,6 +696,7 @@ No Content
 <details>
 
 <summary> <b>GET</b> /api/weather </summary>
+<br/>
 
 <b>Açıklama :</b> Girilen şehir, ilçe ve gün sayısına göre hava durumu tahminini döner.
 
@@ -689,7 +704,7 @@ No Content
 
 <b>Request :</b>
 
-```json
+```text
 city = İstanbul
 district = Maltepe
 days = 1
