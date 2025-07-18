@@ -6,7 +6,6 @@ import com.todoapp.todoapp.repository.PasswordResetOtpRepository;
 import com.todoapp.todoapp.repository.UserRepository;
 import com.todoapp.todoapp.service.passwordreset.PasswordResetService;
 import com.todoapp.todoapp.util.PasswordResetUtil;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

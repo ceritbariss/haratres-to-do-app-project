@@ -1,6 +1,5 @@
 package com.todoapp.todoapp.security;
 
-import com.todoapp.todoapp.service.user.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
