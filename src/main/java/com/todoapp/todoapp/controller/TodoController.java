@@ -107,7 +107,7 @@ public class TodoController {
 
     // Id si verilen todoyu silmek için kullanılır.
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable @Min(value = 1, message = "ID 1'den küçük olamaz") int id){
+    public ResponseEntity<Void> deleteTodo(@PathVariable @Min(value = 1, message = "ID 1'den küçük olamaz") int id) {
         todoService.deleteTodoById(id);
 
         return ResponseEntity.noContent().build();

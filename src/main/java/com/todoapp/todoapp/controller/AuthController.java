@@ -38,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequestDto authRequest){
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDto authRequest){
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -64,14 +64,14 @@ public class AuthController {
 
     // Kullanıcı şifresini unuttuysa email adresini giriyor ve OTP gönderiliyor.
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> sendOtp(@RequestBody EmailRequestDto request){
+    public ResponseEntity<?> sendOtp(@Valid @RequestBody EmailRequestDto request){
         passwordResetService.sendOtpToEmail(request.getEmail());
         return ResponseEntity.ok("OTP e-mail adresinize gönderildi!");
     }
 
     // Kullanıcı email adresine gelen OTP kodunu ve email adresini gönderir eşleşiyor mu kontrolü yapılır.
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestBody OtpVerificationRequestDto request){
+    public ResponseEntity<?> verifyOtp(@Valid @RequestBody OtpVerificationRequestDto request){
         boolean isValid = passwordResetService.verifyOtp(request.getEmail(), request.getOtp());
 
         return isValid ? ResponseEntity.ok("OTP Doğrulandı!")
@@ -80,7 +80,7 @@ public class AuthController {
 
     // Eğer girilen OTP email adresiyle uyuşuyorsa yeni girilen şifreyle güncellenir.
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequestDto request){
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetRequestDto request){
         passwordResetService.updatePassword(request.getEmail(), request.getOtp(), request.getNewPassword());
         return ResponseEntity.ok("Şifreniz başarıyla güncellendi.");
     }
